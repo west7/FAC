@@ -1,0 +1,59 @@
+.data
+	nl: .asciz "\n"
+	p: .asciz "+\n"
+	n: .asciz "-\n"
+	float_2: .float 2.0
+	
+.text
+main:
+	li a7, 6		#syscall to read float
+	ecall
+	
+	fcvt.w.s t0, fa0	#convert float to integer into t0
+		
+	li a7, 2		#syscall to print float
+	ecall
+	
+	la a0, nl		#print '\n'
+	li a7, 4
+	ecall	
+	
+	bge t0, zero, positivo	#verification to see if the float is positive
+	
+	la a0, n		#print the '-' signal
+	li a7, 4
+	ecall
+	j continua
+	
+	positivo:		#print the '+' signal
+	la a0, p
+	li a7, 4
+	ecall
+	
+	continua:
+	
+	li t1, 0
+	li t2, 2
+	
+	fcvt.s.w f2, t2		#saves the number 2 as a float into f2
+	fmv.s f1, fa0		#move float from fa0 to f1
+	fabs.s f1, f1		#takes the absolute value of f1
+	
+	divide_loop:
+	flt.s t3, f1, f2
+	bnez t3, done
+	fdiv.s f1, f1, f2
+	addi t1, t1, 1
+	j divide_loop
+	
+	done:
+	addi a0, t1, 0
+	li a7, 1
+	ecall
+	
+	#Fim de programa
+	li a7, 10
+	ecall
+	
+	
+	

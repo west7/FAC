@@ -1,0 +1,46 @@
+.data
+	str: .asciz "\n"	#variável para armazenar a quebra de linha
+
+.text
+main:
+	li a7, 5		#chamada para ler um inteiro
+	ecall
+	
+	add t0, a0, zero 	#t0 = n
+	add s0, zero, zero	#s0 = i = 0
+	li t2, -2147483648	#carrega o menor inteiro possível em t2
+		
+	for:
+		beq s0, t0, done	#verifico se i = n
+		li a7, 5		#chamada para ler inteiro
+		ecall
+		
+		addi t1, a0, 0		#carregando o inteiro lido em t1
+		bge t1, t2, maior	#verifico se o inteiro lido é maior que o máximo
+		
+		addi s0, s0, 1		#incremento s0 (i)
+		j for			#volto para o loop
+	
+	maior:
+		mv t2, t1		#atualizo o maior valor
+		addi s0, s0, 1		#incremento s0(i)
+		j for
+		
+	done: 
+		mv a0, t2		#coloco o maior valor em a0
+		li a7, 1		#chamada para printar inteiro
+		ecall
+		
+		la a0, str
+		li a7, 4
+		ecall
+		
+		#Fim de programa
+		li a7, 10
+		ecall
+		
+		
+		
+		
+		
+		

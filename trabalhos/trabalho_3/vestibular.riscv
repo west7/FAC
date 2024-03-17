@@ -1,0 +1,60 @@
+.data
+	nl: .asciz "\n"
+	gab: .space 1024 
+	resp: .space 1024	
+	
+.text
+main:
+	li a7, 5		#chamada para ler n
+	ecall
+	
+	addi t0, a0, 0		#guarda n em t0
+	addi t1, zero, 0	#guarda i = 0 em t1
+	addi t2, zero, 0	#guarda o total de acertos em t2 inicialmente zero
+	
+	la a0, gab		#endereço para guardar a string lida
+	addi a1, t0, 2		#tamanho da string lida
+	li a7, 8		#syscall read string
+	ecall
+	
+	la a0, resp		#endereço para guardar a string lida
+	addi a1, t0, 2		#tamanho da string lida
+	li a7, 8		#syscall read string
+	ecall
+	
+	la t5, gab		#carrega as strings em t5 e t6
+	la t6, resp
+
+	
+	for: 
+		bge t1, t0, done
+		lb a2, 0(t5)		#primiero caracter do gab
+		lb a3, 0(t6)		#primiero caracter da resp
+		beq a2, a3, equal	#compara os caracteres
+		addi t1, t1, 1		#incrementa i
+		addi t5, t5, 1		#avança 1 caracter em gab
+		addi t6, t6, 1		#avança 1 caracter em resp
+		j for
+		
+		
+	equal:
+		addi t2, t2, 1		#incrementa total de acertos
+		addi t1, t1, 1		#incrementa i
+		addi t5, t5, 1		#avança 1 caracter em gab
+		addi t6, t6, 1		#avança 1 caracter em resp
+		j for
+	
+	done:
+		addi a0, t2, 0		#guarda o total de acertos em a0
+		li a7,1			#printa o total de acertos
+		ecall
+		
+		la a0, nl
+		li a7, 4		#printa quebra de linha
+		ecall
+		
+		#Fim de programa
+		li a7, 10
+		ecall
+		
+		

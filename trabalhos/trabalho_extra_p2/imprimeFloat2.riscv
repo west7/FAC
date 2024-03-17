@@ -1,0 +1,60 @@
+.data
+	nl: .asciz "\n"
+	p: .asciz "+\n"
+	n: .asciz "-\n"
+	
+.text
+main:
+	li a7, 6		#syscall to read float
+	ecall
+	
+	fmv.x.s a1, fa0		#saves the float as integer into a1
+	
+	li a7, 2		#syscall to print float
+	ecall
+	
+	la a0, nl		#print '\n'
+	li a7, 4
+	ecall	
+	
+	srli a2, a1, 31		#takes the most significant bit from a1
+	
+	beq a2, zero, positivo
+	
+	la a0, n		#print the '-' signal
+	li a7, 4
+	ecall
+	j continua
+	
+	positivo:		#print the '+' signal
+	la a0, p
+	li a7, 4
+	ecall
+	
+	continua:
+	li t1, 127
+	srli a2, a1, 23    	# Shift right lógico para extrair o campo do expoente
+	andi a2, a2, 0xFF  	# Aplica uma máscara para pegar apenas os 8 bits do expoente
+	sub a0, a2, t1		#extract the excess representation of the bias
+	
+	li a7, 1		#syscall to print the exponent
+	ecall
+	la a0, nl		#print '\n'
+	li a7, 4
+	ecall	
+	
+	slli a2, a1, 9		#extract the bits of the mantissa
+        srli a0, a2, 9		#extract the bits of the mantissa
+	
+	li a7, 34		#syscall to print the mantissa into hex form
+	ecall
+	la a0, nl		#print '\n'
+	li a7, 4
+	ecall	
+	
+	#Fim de Programa
+	li a7, 10
+	ecall
+	
+	
+	

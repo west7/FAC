@@ -1,0 +1,19 @@
+#Comentários
+
+#A seção .data é usada para armazenar dados
+#como uma string por exemplo
+.data
+olaMundo: 
+	.asciz "Ola Mundo\n"
+				
+main:
+	la a0, olaMundo		#guarda o valor da str em a0
+	li a7, 4		#O valor 4 no registrador a7, faz uma chamada do SO que solicita a impressão de uma string
+	ecall
+	
+	#Fim de Programa
+	addi a0, zero, 13 
+	addi a7, zero, 93
+	ecall
+	
+

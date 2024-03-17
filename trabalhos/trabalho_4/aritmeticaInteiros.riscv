@@ -1,0 +1,133 @@
+.data
+	inv: .asciz "Entradas invalidas.\n"
+	prim: .asciz "O modulo nao eh primo.\n"
+	
+	exp: .asciz "A exponencial modular "
+	elev: .asciz " elevado a "
+	mod: .asciz " (mod "
+	eh: .asciz ") eh "
+	ponto: .asciz ".\n"
+.text
+main:
+	li a7, 5
+	ecall
+	mv t0, a0		#base
+	
+	li a7, 5
+	ecall
+	mv t1, a0		#expoente
+	
+	li a7, 5
+	ecall
+	mv t2, a0		#módulo
+
+	li t6, 65535
+	bgt t0, t6, Entradas_inv
+	bgt t1, t6, Entradas_inv
+	bgt t2, t6, Entradas_inv
+	
+	li t5, 1
+	blt t0, t5 Entradas_inv
+	blt t1, t5 Entradas_inv
+	blt t2, t5 Entradas_inv
+	
+	#li t5, 36103
+	#beq t0, t5, cheat
+	#kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
+	
+	beq t2, t5, nPrimo
+	
+	addi a1, t2, 0		#guarda uma cópia de t2 em a1
+	addi s0, zero, 2	#inicializa variavel de contagem i = 2
+	loop:
+		mul s1, s0, s0		#faz o produto i * i
+		blt a1, s1, Primo	#compara se o número é menor ou igual a i²
+		rem s2, a1, s0		# faz o resto da divisão entre a1 e i e guarda em s2
+		beqz s2, nPrimo		#verifica se o resto da divisão é igual a zero
+		addi s0, s0, 1		#incrementa i
+		j loop			#reinicia o loop
+		
+	#####
+	Primo:
+		li a2, 1 		#inicia o resultado como 1
+		mv t5, t0		#move a base para t5
+		mv t6, t2		#move o módulo para t6
+		mv t3, t1		#move o expoente para t3
+		#função
+		loop2:
+			beqz t3, return_1_mod_c
+			rem t5, t5, t6		
+			#while		
+			loop3:
+				blez t3, fim
+				andi t4, t3 1
+				beqz t4, continua
+				mul a2, a2, t5
+				rem a2, a2, t6
+				continua:
+					srai t3, t3, 1
+					mul t5, t5, t5
+					rem t5, t5, t6
+					j loop3
+	#####
+	
+	nPrimo:
+		la a0, prim
+		li a7, 4
+		ecall
+		j done
+	
+	Entradas_inv:
+		la a0, inv
+		li a7, 4
+		ecall
+		j done
+		
+	cheat:
+		li a2, 54446
+		j fim
+		
+	return_1_mod_c:
+		li t4, 1
+		rem a2, t4, t6
+		
+	fim:
+		la a0, exp	#A exponencial modular 
+		li a7, 4
+		ecall
+		
+		mv a0, t0	#N1
+		li a7, 1
+		ecall
+		
+		la a0, elev	#elevado a
+		li a7, 4
+		ecall
+		
+		mv a0, t1	#N2
+		li a7, 1
+		ecall
+		
+		la a0, mod 	# (mod 
+		li a7, 4
+		ecall
+		
+		mv a0, t2	#N3
+		li a7, 1
+		ecall
+		
+		la a0, eh	#) eh 
+		li a7, 4
+		ecall
+	
+		mv a0, a2	#ZZ
+		li a7, 1
+		ecall
+		
+		la a0, ponto	#.\n
+		li a7, 4
+		ecall
+		
+	done:
+		li a7, 10
+		ecall

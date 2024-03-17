@@ -1,0 +1,123 @@
+.data
+	input: .space 1024
+	output: .space 1024
+	nl: .asciz "\n"
+	
+.text
+main:	
+	li a7, 12		#lê char da entrada padrão
+	ecall
+	addi t0, a0, 0		#guarda o char em t0
+	
+	#li a7, 12		#consome quebra de linha
+	#ecall
+	
+	li a7, 5		#le o tamanho da string
+	ecall
+		
+	addi t1, a0, 0		#guarda o tamanho da string em t1
+		
+	la a0, input		#endereço para guardar a string lida
+	addi a1, t1, 2		#tamanho da string lida
+	li a7, 8		#syscall read string
+	ecall
+	
+	la a4, output		#carrega endereço de destino em a4
+	
+	#carrega as possiveis operações
+	li t1, 'M'
+	li t2, 'm'
+	li t3, 'c'
+	
+	#Verifica qual operação é para ser executada
+	beq t0, t1, M
+	beq t0, t2, m
+	beq t0, t3, c
+	
+	M:
+		lb a1, 0(a0)		#puxa primeiro byte da string
+		
+		beqz a1, done		#verifica se é o caracter terminator nulo
+		
+		li a2, 'a'			#ASCII 'a'
+		li a3, 'z'			#ASCII 'z'
+		blt a1, a2, not_lowercase
+		bgt a1, a3, not_lowercase
+		
+		addi a1, a1, -32
+		
+		not_lowercase:
+			sb a1, 0(a4)
+			addi a0, a0, 1
+			addi a4, a4, 1
+			j M
+	
+	m:
+		lb a1, 0(a0)		#puxa primeiro byte da string
+		
+		beqz a1, done		#verifica se é o caracter terminator nulo
+		
+		li a2, 'A'			#ASCII 'A'
+		li a3, 'Z'			#ASCII 'Z'
+		blt a1, a2, not_uppercase
+		bgt a1, a3, not_uppercase
+		
+		addi a1, a1, 32
+		
+		not_uppercase:
+			sb a1, 0(a4)
+			addi a0, a0, 1
+			addi a4, a4, 1
+			j m
+	
+	c:
+		lb a1, 0(a0)		#puxa primeiro byte da string
+		
+		beqz a1, done		#verifica se é o caracter terminator nulo
+
+		li a2, 'a'			#ASCII 'a'
+		li a3, 'z'			#ASCII 'z'
+		blt a1, a2, not_lowercase2
+		bgt a1, a3, not_lowercase2
+		
+		addi a1, a1, -32
+		
+		not_lowercase2:
+			sb a1, 0(a4)
+			
+			li t4, ' '
+			
+			addi a0, a0, 1
+			addi a4, a4, 1
+			
+			lb a1, 0(a0)
+			
+			beqz a1, done
+			
+			lb t5, -1(a0)
+			beq t5, t4, next
+			
+			j not_lowercase2
+			
+		next:
+			blt a1, a2, not_lowercase2
+			bgt a1, a3, not_lowercase2
+			
+			addi a1, a1, -32
+			j not_lowercase2
+			
+	done:
+		la a0, output
+		li a7, 4
+		ecall
+		
+		la a0, nl
+		li a7, 4
+		ecall
+	
+	#Fim de programa
+	li a7, 10
+	ecall
+	
+	
+	

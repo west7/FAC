@@ -1,0 +1,186 @@
+.data
+r_add:	.asciz "ADD: "
+r_sub: 	.asciz "SUB: "
+r_and: 	.asciz "AND: "
+r_or:	.asciz "OR: "
+r_xor:	.asciz "XOR: "
+r_mask:	.asciz "MASK: "
+
+r_sll:	.asciz "SLL("
+r_slr:	.asciz "SRL("
+
+r_fecha: .asciz "): "
+str: .asciz "\n"
+
+.text
+main:
+	li a7, 5	#chamada para ler 'a'
+	ecall
+	mv t0, a0	#guarda 'a' em t0
+	
+	li a7, 5	#chamada para ler 'b'
+	ecall
+	mv t1, a0	#guarda 'b' em t1
+	
+	li a7, 5	#chamada para ler 'c'
+	ecall
+	mv t2, a0	#guarda 'c' em t2
+	
+	#SOMA
+	add t3, t0, t1	#realizo a soma entre a e b
+	la a0, r_add	#guardo a string da soma em a0
+	li a7, 4	#syscall print string
+	ecall
+	
+	#print valor da soma
+	addi a0, t3, 0
+	li a7, 1	
+	ecall
+	
+	#print \n
+	la a0, str
+	li a7, 4
+	ecall
+	
+	#SUBTRAÇÃO
+	sub t3, t0, t1	#realizo a subtração entre a e b
+	la a0, r_sub	#guardo a string da sub em a0
+	li a7, 4	#syscall print string
+	ecall
+	
+	#print valor da sub
+	addi a0, t3, 0
+	li a7, 1	
+	ecall
+	
+	#print \n
+	la a0, str
+	li a7, 4
+	ecall
+	
+	#AND
+	and t3, t0, t1	#realizo a and entre a e b
+	la a0, r_and	#guardo a string da and em a0
+	li a7, 4	#syscall print string
+	ecall
+	
+	#print valor do and
+	addi a0, t3, 0
+	li a7, 1	
+	ecall
+	
+	#print \n
+	la a0, str
+	li a7, 4
+	ecall
+	
+	#OR
+	or t3, t0, t1	#realizo a or entre a e b
+	la a0, r_or	#guardo a string da or em a0
+	li a7, 4	#syscall print string
+	ecall
+	
+	#print valor da or
+	addi a0, t3, 0
+	li a7, 1	
+	ecall
+	
+	#print \n
+	la a0, str
+	li a7, 4
+	ecall
+	
+	#XOR
+	xor t3, t0, t1	#realizo a xor entre a e b
+	la a0, r_xor	#guardo a string da xor em a0
+	li a7, 4	#syscall print string
+	ecall
+	
+	#print valor da xor
+	addi a0, t3, 0
+	li a7, 1	
+	ecall
+	
+	#print \n
+	la a0, str
+	li a7, 4
+	ecall
+	
+	#MASK
+	andi t4, t2, 31	#realizo a andi entre c e 31 e guardo valor da mask em t4
+	la a0, r_mask	#guardo a string da mask em a0
+	li a7, 4	#syscall print string
+	ecall
+	
+	#print valor da mask
+	addi a0, t4, 0
+	li a7, 1	
+	ecall
+	
+	#print \n
+	la a0, str
+	li a7, 4
+	ecall
+	
+	##
+	#SLL
+	sll t3, t0, t4 	#realizo a sll a esq de a em m bits
+	
+	la a0, r_sll	#guardo a string da sll em a0
+	li a7, 4	#syscall print string
+	ecall
+	
+	#print valor da mask
+	add a0, t4, zero
+	li a7, 1	
+	ecall
+	
+	#print string fecha parenteses
+	la a0, r_fecha
+	li a7, 4
+	ecall
+	
+	#print valor sll
+	addi a0, t3, 0
+	li a7, 1
+	ecall
+	
+	#print \n
+	la a0, str
+	li a7, 4
+	ecall
+	
+	#SRL
+	srl t3, t1, t4 	#realizo a srl a dir de b em m bits
+	
+	la a0, r_slr	#guardo a string da srl em a0
+	li a7, 4	#syscall print string
+	ecall
+	
+	#print valor da mask
+	addi a0, t4, 0
+	li a7, 1	
+	ecall
+	
+	#print string fecha parenteses
+	la a0, r_fecha
+	li a7, 4
+	ecall
+	
+	#print valor srl
+	addi a0, t3, 0
+	li a7, 1
+	ecall
+	
+	#print \n
+	la a0, str
+	li a7, 4
+	ecall
+	
+	
+	#Fim de programa
+	li a7, 10
+	ecall
+	
+	
+	
